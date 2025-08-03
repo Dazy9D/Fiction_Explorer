@@ -10,7 +10,8 @@ class Content extends Model
         'title',
         'description',
         'release_date',
-        'type'
+        'type',
+        'poster'
     ];
     protected $casts = ['release_date' => 'date'];
 }

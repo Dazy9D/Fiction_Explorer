@@ -7,15 +7,15 @@ use App\Models\Content;
 
 class ContentController extends Controller
 {
-    /**
-     * Show the list of contents with filters for type and release status.
-     */
+
+    // Show the list of contents with filters for type and release status.
+
     public function index(Request $request)
     {
         // Fetch query parameters or set defaults
         $search = $request->input('q', '');
-        $type = $request->input('type', 'all');       // movie, series, all
-        $filter = $request->input('filter', 'all');   // all, released, upcoming
+        $type = $request->input('type', 'all');
+        $filter = $request->input('filter', 'all');
 
         // Start query builder
         $query = Content::query();
@@ -36,7 +36,7 @@ class ContentController extends Controller
         } elseif ($filter === 'upcoming') {
             $query->whereDate('release_date', '>', now());
         }
-        
+
         // Sort latest release date descending
         $contents = $query->orderBy('release_date', 'desc')->paginate(10);
 
@@ -44,12 +44,40 @@ class ContentController extends Controller
         return view('contents.index', compact('contents', 'search', 'type', 'filter'));
     }
 
-    /**
-     * Show details of a single content.
-     */
+
+    // Show details of a single content
+
     public function show($id)
     {
         $content = Content::findOrFail($id);
         return view('contents.show', compact('content'));
+    }
+
+
+    // Show the form to create a new movie or series
+    public function create()
+    {
+        return view('contents.create');
+    }
+
+    // Store the new movie or series
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'release_date' => 'required|date',
+            'type' => 'required|in:movie,series',
+            'poster' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        ]);
+
+        if ($request->hasFile('poster')) {
+            $posterPath = $request->file('poster')->store('posters', 'public');
+            $validated['poster'] = $posterPath;
+        }
+
+        Content::create($validated);
+
+        return redirect()->route('contents.index')->with('success', 'Content added successfully!');
     }
 }
