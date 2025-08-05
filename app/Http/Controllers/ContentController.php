@@ -37,8 +37,8 @@ class ContentController extends Controller
             $query->whereDate('release_date', '>', now());
         }
 
-        // Sort latest release date descending
-        $contents = $query->orderBy('release_date', 'desc')->paginate(10);
+        // Sort Alphabetically
+        $contents = $query->orderBy('title', 'asc')->paginate(10);
 
         // Pass filters & results to the view
         return view('contents.index', compact('contents', 'search', 'type', 'filter'));
