@@ -8,8 +8,6 @@ use App\Models\Content;
 class ContentController extends Controller
 {
 
-    // Show the list of contents with filters for type and release status.
-
     public function index(Request $request)
     {
         // Fetch query parameters or set defaults
