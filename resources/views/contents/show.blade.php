@@ -36,7 +36,7 @@
     @endif
 
     <p><strong>Type:</strong> {{ ucfirst($content->type) }}</p>
-    <p><strong>Release Date:</strong> {{ $content->release_date->format('M d, Y') }}</p>
+    <p><strong>Release Date:</strong> {{ $content->release_date->format('d M, Y') }}</p>
 
     @if ($content->description)
         <p>{{ $content->description }}</p>

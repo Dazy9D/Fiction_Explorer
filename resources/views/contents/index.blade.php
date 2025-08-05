@@ -119,7 +119,7 @@
                     <div>
                         <small>
                             Type: <strong>{{ ucfirst($content->type) }}</strong> |
-                            Release Date: <strong>{{ $content->release_date->format('M d, Y') }}</strong>
+                            Release Date: <strong>{{ $content->release_date->format('d M, Y') }}</strong>
                         </small>
                     </div>
                     @if ($content->description)
