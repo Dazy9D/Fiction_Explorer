@@ -87,8 +87,8 @@
         <small>Hold Ctrl to select multiple genres</small>
 
         <label for="rating">Rating:</label>
-        <input type="number" name="rating" id="rating" value="{{ old('rating') }}" min="0" max="10"
-            step="0.1" placeholder="e.g., 8.0">
+        <input type="number" name="rating" id="rating" value="{{ old('rating', $content->rating) }}"
+            min="0" max="10" step="0.1" placeholder="e.g., 8.5">
 
         <label for="poster">Poster Image (choose to replace):</label>
         <input type="file" name="poster" id="poster" accept="image/*">
