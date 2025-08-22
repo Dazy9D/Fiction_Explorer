@@ -10,10 +10,11 @@ class AdminController extends Controller
 
     public function index(Request $request)
     {
-        // Fetch query parameters or set defaults
         $search = $request->input('q', '');
         $type = $request->input('type', 'all');
         $filter = $request->input('filter', 'all');
+        $genre = $request->input('genre', 'all');
+        $rating = $request->input('rating', '');
 
         // Start query builder
         $query = Content::query();
@@ -32,11 +33,21 @@ class AdminController extends Controller
             $query->whereDate('release_date', '>', now());
         }
 
-        // Sort Alphabetically and loads only 10 per page
+        if ($genre !== 'all' && !empty($genre)) {
+            $query->whereHas('genres', function ($q) use ($genre) {
+                $q->where('genres.id', $genre);
+            });
+        }
+
+        if (is_numeric($rating)) {
+            $query->where('rating', '>=', floatval($rating));
+        }
+
         $contents = $query->orderBy('title', 'asc')->paginate(10);
 
-        // Pass filters & results to the view
-        return view('admin.index', compact('contents', 'search', 'type', 'filter'));
+        $genres = \App\Models\Genre::orderBy('name')->get();
+
+        return view('admin.index', compact('contents', 'search', 'type', 'filter', 'genres', 'genre', 'rating'));
     }
 
 
@@ -65,6 +76,7 @@ class AdminController extends Controller
             'type' => 'required|in:movie,series',
             'genres' => 'nullable|array',
             'genres.*' => 'exists:genres,id',
+            'rating' => 'nullable|numeric|min:0|max:10',
             'poster' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
@@ -77,7 +89,7 @@ class AdminController extends Controller
 
         // Attach genres (if any)
         if ($request->filled('genres')) {
-            $content->genres()->sync($request->genres); 
+            $content->genres()->sync($request->genres);
         }
 
         return redirect()->route('admin.index')->with('success', 'Content added successfully!');
@@ -102,6 +114,7 @@ class AdminController extends Controller
             'type' => 'required|in:movie,series',
             'genres' => 'nullable|array',
             'genres.*' => 'exists:genres,id',
+            'rating' => 'nullable|numeric|min:0|max:10',
             'poster' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 

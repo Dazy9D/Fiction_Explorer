@@ -12,7 +12,7 @@ Route::get('/admin/{id}/edit', [AdminController::class, 'edit'])->name('admin.ed
 Route::put('/admin/{id}', [AdminController::class, 'update'])->name('admin.update');
 Route::post('/admin', [AdminController::class, 'store'])->name('admin.store');
 Route::get('/admin/{id}', [AdminController::class, 'show'])->name('admin.show');
-Route::get('/user/{id}', [AdminController::class, 'show'])->name('user.show');
+Route::get('/user/{id}', [UserController::class, 'show'])->name('user.show');
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
 Route::get('/register', [AuthController::class, 'showRegister'])->name('register');

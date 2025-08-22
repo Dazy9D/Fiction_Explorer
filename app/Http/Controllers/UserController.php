@@ -10,13 +10,16 @@ class UserController extends Controller
 
     public function index(Request $request)
     {
-        // Fetch query parameters or set defaults
         $search = $request->input('q', '');
         $type = $request->input('type', 'all');
         $filter = $request->input('filter', 'all');
+        $genre = $request->input('genre', 'all');
+        $rating = $request->input('rating', '');
 
         // Start query builder
-        $query = Content::query();
+        $query = Content::with(['genres' => function ($q) {
+            $q->orderBy('name');
+        }]);
 
         if (!empty($search)) {
             $query->where('title', 'LIKE', "%{$search}%");
@@ -32,12 +35,25 @@ class UserController extends Controller
             $query->whereDate('release_date', '>', now());
         }
 
-        // Sort Alphabetically and loads only 10 per page
+        if ($genre !== 'all' && !empty($genre)) {
+            $query->whereHas('genres', function ($q) use ($genre) {
+                $q->where('genres.id', $genre);
+            });
+        }
+
+        if (is_numeric($rating)) {
+            $query->where('rating', '>=', floatval($rating));
+        }
+
+        // Sort alphabetically and paginate
         $contents = $query->orderBy('title', 'asc')->paginate(10);
 
-        // Pass filters & results to the view
-        return view('user.index', compact('contents', 'search', 'type', 'filter'));
+        // Get genres for filter dropdown
+        $genres = \App\Models\Genre::orderBy('name')->get();
+
+        return view('user.index', compact('contents', 'search', 'type', 'filter', 'genres', 'genre', 'rating'));
     }
+
 
 
     // Show details of a single content
@@ -47,6 +63,4 @@ class UserController extends Controller
         $content = Content::findOrFail($id);
         return view('user.show', compact('content'));
     }
-
 }
-        

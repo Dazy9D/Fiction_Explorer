@@ -86,6 +86,10 @@
         </select>
         <small>Hold Ctrl to select multiple genres</small>
 
+        <label for="rating">Rating:</label>
+        <input type="number" name="rating" id="rating" value="{{ old('rating') }}" min="0" max="10"
+            step="0.1" placeholder="e.g., 8.0">
+
         <label for="poster">Poster Image (choose to replace):</label>
         <input type="file" name="poster" id="poster" accept="image/*">
 
@@ -98,7 +102,7 @@
 
         <button type="submit">Update Content</button>
     </form>
-    <br> </br>
+    <br>
     <a class="back-link" href="{{ route('admin.index') }}">&larr; Back to List</a>
 </body>
 

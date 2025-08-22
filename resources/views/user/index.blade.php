@@ -109,6 +109,27 @@
             <option value="upcoming" {{ $filter === 'upcoming' ? 'selected' : '' }}>Upcoming</option>
         </select>
 
+        <br>
+        <label for="genre">Genre:</label>
+        <select name="genre" id="genre">
+            <option value="">All Genres</option>
+            @foreach ($genres as $genre)
+                <option value="{{ $genre->id }}" {{ request('genre') == $genre->id ? 'selected' : '' }}>
+                    {{ $genre->name }}
+                </option>
+            @endforeach
+        </select>
+
+        <label for="rating">Minimum Rating:</label>
+        <select name="rating" id="rating">
+            <option value="">Any Rating</option>
+            @for ($r = 0; $r <= 10; $r += 0.5)
+                <option value="{{ $r }}" {{ request('rating') == $r ? 'selected' : '' }}>
+                    {{ number_format($r, 1) }}+
+                </option>
+            @endfor
+        </select>
+
         <button type="submit">Filter</button>
         <a href="{{ route('user.index') }}" style="margin-left: 10px;">Reset</a>
     </form>
@@ -124,12 +145,15 @@
                         <small>
                             Type: <strong>{{ ucfirst($content->type) }}</strong> |
                             Release Date: <strong>{{ $content->release_date->format('d M, Y') }}</strong>
-                            <strong>Genres:</strong>
+                            Genres:
+
+                            <strong>
                             @foreach ($content->genres as $genre)
                                 {{ $genre->name }}@if (!$loop->last)
                                     ,
                                 @endif
                             @endforeach
+                            </strong>
 
                             <p><strong>Rating:</strong> {{ $content->rating ?? 'N/A' }}</p>
 
