@@ -11,7 +11,13 @@ class Content extends Model
         'description',
         'release_date',
         'type',
+        'rating',
         'poster'
     ];
     protected $casts = ['release_date' => 'date'];
+
+    public function genres()
+    {
+        return $this->belongsToMany(Genre::class, 'content_genre')->orderBy('name', 'asc');
+    }
 }

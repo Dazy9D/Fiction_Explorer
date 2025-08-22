@@ -9,87 +9,93 @@
             max-width: 700px;
             margin: 30px auto;
             padding: 0 15px;
+            background-color: #f9f9f9;
             color: #333;
-            background: #f9f9f9;
         }
 
         h1 {
             margin-top: 30px;
+            margin-bottom: 10px;
         }
 
-        ul {
-            list-style-type: none;
-            padding-left: 0;
-        }
-
-        li {
-            margin-bottom: 15px;
-            border-bottom: 1px solid #ccc;
-            padding-bottom: 10px;
-        }
-
-        a {
-            color: #1a73e8;
-            text-decoration: none;
-        }
-
-        a.button {
-            padding: 5px 10px;
-            color: #fff;
-            background: #1a73e8;
-            border: none;
-            border-radius: 3px;
-            text-decoration: none;
-        }
-
-        form {
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             margin-bottom: 20px;
         }
 
-        select,
-        input[type="text"] {
-            padding: 5px;
-        }
-
-        .pagination {
-            margin: 20px 0;
-        }
-
-        .pagination ul {
+        .buttons {
             display: flex;
-            gap: 5px;
+            gap: 10px;
         }
 
-        .pagination li {
-            list-style: none;
+        .btn-add,
+        .btn-logout {
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-weight: bold;
+            cursor: pointer;
+            border: none;
+            color: white;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .btn-add {
-            display: inline-block;
-            margin-bottom: 20px;
-            padding: 8px 16px;
-            background: #1a73e8;
-            color: #fff;
-            text-decoration: none;
-            border-radius: 4px;
+            background-color: #1a73e8;
         }
 
         .btn-add:hover {
-            background: #155ab6;
+            background-color: #155ab6;
+        }
+
+        .btn-logout {
+            background-color: #e53e3e;
+        }
+
+        .btn-logout:hover {
+            background-color: #9b2c2c;
+        }
+
+        .btn-edit {
+            background-color: #fbbf24;
+            color: #1a202c;
+            padding: 4px 8px;
+            font-size: 0.9rem;
+            border-radius: 4px;
+            font-weight: bold;
+            text-decoration: none;
+            margin-left: 10px;
+        }
+
+        .btn-edit:hover {
+            background-color: #d97706;
+            color: white;
         }
     </style>
 </head>
 
 <body>
-    <h1>Fiction Explorer</h1>
 
-    <a href="{{ route('contents.create') }}" class="btn-add">
-        + Add New
-    </a>
+    <div class="header">
+        <h1>Fiction Explorer</h1>
+
+        <div class="buttons">
+            <a href="{{ route('admin.create') }}" class="btn-add">+ Add New</a>
+
+            <form method="POST" action="{{ route('logout') }}" style="margin: 0;">
+                @csrf
+                <button type="submit" class="btn-logout">Logout</button>
+            </form>
+        </div>
+    </div>
 
 
     <!-- Search & Filters Form -->
-    <form method="GET" action="{{ route('contents.index') }}">
+    <form method="GET" action="{{ route('admin.index') }}">
         <input type="text" name="q" value="{{ old('q', $search) }}" placeholder="Search by title..."
             style="width: 250px;">
 
@@ -106,20 +112,32 @@
         </select>
 
         <button type="submit">Filter</button>
-        <a href="{{ route('contents.index') }}" style="margin-left: 10px;">Reset</a>
+        <a href="{{ route('admin.index') }}" style="margin-left: 10px;">Reset</a>
     </form>
 
     @if ($contents->count())
         <ul>
             @foreach ($contents as $content)
                 <li>
-                    <a href="{{ route('contents.show', $content->id) }}" style="font-size: 18px; font-weight: bold;">
+                    <a href="{{ route('admin.show', $content->id) }}" style="font-size: 18px; font-weight: bold;">
                         {{ $content->title }}
                     </a>
+                    <a href="{{ route('admin.edit', $content->id) }}" class="btn-edit">Edit</a>
+
                     <div>
                         <small>
                             Type: <strong>{{ ucfirst($content->type) }}</strong> |
                             Release Date: <strong>{{ $content->release_date->format('d M, Y') }}</strong>
+                            <strong>Genres:</strong>
+                            @foreach ($content->genres as $genre)
+                                {{ $genre->name }}@if (!$loop->last)
+                                    ,
+                                @endif
+                            @endforeach
+
+                            <p><strong>Rating:</strong> {{ $content->rating ?? 'N/A' }}</p>
+
+
                         </small>
                     </div>
                     @if ($content->description)
@@ -129,7 +147,6 @@
             @endforeach
         </ul>
 
-        <!-- Pagination -->
         <div class="pagination">
             {{ $contents->appends(request()->input())->links() }}
         </div>
