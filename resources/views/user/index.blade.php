@@ -123,7 +123,7 @@
         <label for="rating">Minimum Rating:</label>
         <select name="rating" id="rating">
             <option value="">Any Rating</option>
-            @for ($r = 0; $r <= 10; $r += 0.5)
+            @for ($r = 1; $r <= 10; $r += 0.5)
                 <option value="{{ $r }}" {{ request('rating') == $r ? 'selected' : '' }}>
                     {{ number_format($r, 1) }}+
                 </option>
