@@ -20,4 +20,9 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Content::class, 'watchlist')->withTimestamps();
     }
+
+    public function watchedContents()
+    {
+        return $this->belongsToMany(Content::class, 'watched')->withTimestamps();
+    }
 }

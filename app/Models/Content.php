@@ -25,4 +25,9 @@ class Content extends Model
     {
         return $this->belongsToMany(User::class, 'watchlist')->withTimestamps();
     }
+
+    public function watchedBy()
+    {
+        return $this->belongsToMany(User::class, 'watched')->withTimestamps();
+    }
 }

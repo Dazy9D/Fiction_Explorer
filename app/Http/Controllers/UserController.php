@@ -84,4 +84,29 @@ class UserController extends Controller
         $contents = auth()->user()->watchlist()->with('genres')->get();
         return view('user.watchlist', compact('contents'));
     }
+
+    public function markAsWatched($id)
+    {
+        $content = Content::findOrFail($id);
+        $user = auth()->user();
+
+        $user->watchedContents()->syncWithoutDetaching([$content->id]);
+        $user->watchlist()->detach($content->id);
+
+        return back()->with('success', 'Marked as watched and removed from your watchlist.');
+    }
+
+
+    public function unmarkAsWatched($id)
+    {
+        $content = Content::findOrFail($id);
+        auth()->user()->watchedContents()->detach($content->id);
+        return back()->with('success', 'Unmarked as watched!');
+    }
+
+    public function showWatched()
+    {
+        $contents = auth()->user()->watchedContents()->with('genres')->get();
+        return view('user.watched', compact('contents'));
+    }
 }

@@ -63,6 +63,11 @@
             color: white;
         }
 
+        .action-buttons .watched-btn {
+            background-color: #4CAF50;
+            color: white;
+        }
+
         .action-buttons .logout-btn {
             background-color: #d32f2f;
             color: white;
@@ -147,6 +152,11 @@
             <div class="action-buttons">
                 <a href="{{ route('watchlist.show') }}">
                     <button class="watchlist-btn">View My Watchlist</button>
+                </a>
+                <a href="{{ route('watched.show') }}">
+                    <button class="watched-btn">
+                        View Watched
+                    </button>
                 </a>
                 <form action="{{ route('logout') }}" method="POST">
                     @csrf

@@ -31,7 +31,7 @@
 
         button {
             display: inline-block;
-            padding: 4px 12px;
+            padding: 6px 14px;
             margin-right: 10px;
             background-color: #1a73e8;
             color: white;
@@ -56,13 +56,28 @@
             margin-bottom: 15px;
             display: inline-block;
         }
+
+        .mark-watched-btn {
+            background-color: #4caf50;
+        }
+
+        .mark-watched-btn:hover {
+            background-color: #43a047;
+        }
+
+        .unmark-watched-btn {
+            background-color: #757575;
+        }
+
+        .unmark-watched-btn:hover {
+            background-color: #616161;
+        }
     </style>
 </head>
 
 <body>
     <h1>{{ $content->title }}</h1>
 
-    {{-- Display poster if available --}}
     @if ($content->poster)
         <img src="{{ asset('storage/' . $content->poster) }}" alt="{{ $content->title }} Poster" class="poster-img">
     @else
@@ -82,7 +97,20 @@
     @auth
         @php
             $inWatchlist = auth()->user()->watchlist->contains($content->id);
+            $isWatched = auth()->user()->watchedContents->contains($content->id);
         @endphp
+
+        @if (!$isWatched)
+            <form action="{{ route('watched.add', $content->id) }}" method="POST" style="display:inline;">
+                @csrf
+                <button type="submit" class="mark-watched-btn">Mark as Watched</button>
+            </form>
+        @else
+            <form action="{{ route('watched.remove', $content->id) }}" method="POST" style="display:inline;">
+                @csrf
+                <button type="submit" class="unmark-watched-btn">Unmark Watched</button>
+            </form>
+        @endif
 
         @if (!$inWatchlist)
             <form action="{{ route('watchlist.add', $content->id) }}" method="POST" style="display:inline;">
