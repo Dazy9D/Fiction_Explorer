@@ -6,7 +6,7 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            max-width: 700px;
+            max-width: 1000px;
             margin: 30px auto;
             padding: 0 15px;
             background-color: #f9f9f9;
@@ -26,13 +26,56 @@
         }
 
         .buttons {
-            display: flex;
+            display: inline;
             gap: 10px;
         }
 
+        button {
+            display: inline-block;
+            padding: 4px 12px;
+            margin-right: 10px;
+            background-color: #1a73e8;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .action-buttons button {
+            padding: 6px 18px;
+            border: none;
+            outline: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: filter 0.2s;
+        }
+
+        .action-buttons .watchlist-btn {
+            background-color: #1a73e8;
+            color: white;
+        }
+
+        .action-buttons .logout-btn {
+            background-color: #d32f2f;
+            color: white;
+        }
+
+        .action-buttons button:hover {
+            filter: brightness(0.92);
+        }
+
+
         .btn-add,
         .btn-logout {
-            padding: 8px 16px;
+            padding: 8px 18px;
             border-radius: 4px;
             font-weight: bold;
             cursor: pointer;
@@ -75,6 +118,23 @@
             background-color: #d97706;
             color: white;
         }
+
+        .watchlist-btn {
+            background-color: #388e3c;
+        }
+
+        .watchlist-btn.remove {
+            background-color: #d32f2f;
+        }
+
+        .watchlist-btn:hover {
+            opacity: 0.9;
+        }
+
+        .watchlist-link {
+            margin-bottom: 15px;
+            display: inline-block;
+        }
     </style>
 </head>
 
@@ -83,12 +143,17 @@
     <div class="header">
         <h1>Fiction Explorer</h1>
 
-        <div class="buttons">
-            <form method="POST" action="{{ route('logout') }}" style="margin: 0;">
-                @csrf
-                <button type="submit" class="btn-logout">Logout</button>
-            </form>
-        </div>
+        @auth
+            <div class="action-buttons">
+                <a href="{{ route('watchlist.show') }}">
+                    <button class="watchlist-btn">View My Watchlist</button>
+                </a>
+                <form action="{{ route('logout') }}" method="POST">
+                    @csrf
+                    <button type="submit" class="logout-btn">Logout</button>
+                </form>
+            </div>
+        @endauth
     </div>
 
 
@@ -148,15 +213,14 @@
                             Genres:
 
                             <strong>
-                            @foreach ($content->genres as $genre)
-                                {{ $genre->name }}@if (!$loop->last)
-                                    ,
-                                @endif
-                            @endforeach
+                                @foreach ($content->genres as $genre)
+                                    {{ $genre->name }}@if (!$loop->last)
+                                        ,
+                                    @endif
+                                @endforeach
                             </strong>
 
                             <p><strong>Rating:</strong> {{ $content->rating ?? 'N/A' }}</p>
-
 
                         </small>
                     </div>

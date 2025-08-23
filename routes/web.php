@@ -20,3 +20,6 @@ Route::post('/register', [AuthController::class, 'register']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::get('/admin', [AdminController::class, 'index'])->middleware('auth')->name('admin.index');
 Route::get('/user', [UserController::class, 'index'])->middleware('auth')->name('user.index');
+Route::post('/watchlist/add/{id}', [UserController::class, 'addToWatchlist'])->name('watchlist.add')->middleware('auth');
+Route::post('/watchlist/remove/{id}', [UserController::class, 'removeFromWatchlist'])->name('watchlist.remove')->middleware('auth');
+Route::get('/watchlist', [UserController::class, 'showWatchlist'])->name('watchlist.show');

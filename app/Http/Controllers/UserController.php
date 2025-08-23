@@ -63,4 +63,25 @@ class UserController extends Controller
         $content = Content::findOrFail($id);
         return view('user.show', compact('content'));
     }
+
+    public function addToWatchlist($id)
+    {
+        $content = Content::findOrFail($id);
+        auth()->user()->watchlist()->syncWithoutDetaching([$content->id]);
+        return back()->with('success', 'Added to watchlist!');
+    }
+
+    public function removeFromWatchlist($id)
+    {
+        $content = Content::findOrFail($id);
+        auth()->user()->watchlist()->detach($content->id);
+        return back()->with('success', 'Removed from watchlist!');
+    }
+
+
+    public function showWatchlist()
+    {
+        $contents = auth()->user()->watchlist()->with('genres')->get();
+        return view('user.watchlist', compact('contents'));
+    }
 }

@@ -20,4 +20,9 @@ class Content extends Model
     {
         return $this->belongsToMany(Genre::class, 'content_genre')->orderBy('name', 'asc');
     }
+
+    public function watchlistedBy()
+    {
+        return $this->belongsToMany(User::class, 'watchlist')->withTimestamps();
+    }
 }

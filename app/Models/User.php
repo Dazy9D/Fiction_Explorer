@@ -15,4 +15,9 @@ class User extends Authenticatable
         'password',
         'remember_token',
     ];
+
+    public function watchlist()
+    {
+        return $this->belongsToMany(Content::class, 'watchlist')->withTimestamps();
+    }
 }
