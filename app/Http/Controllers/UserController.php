@@ -54,10 +54,6 @@ class UserController extends Controller
         return view('user.index', compact('contents', 'search', 'type', 'filter', 'genres', 'genre', 'rating'));
     }
 
-
-
-    // Show details of a single content
-
     public function show($id)
     {
         $content = Content::findOrFail($id);

@@ -4,6 +4,22 @@
 <head>
     <title>My Watchlist</title>
     <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 30px auto;
+            padding: 0 15px;
+            background-color: #f9f9f9;
+            color: #333;
+        }
+
+        .poster-img {
+            max-width: 150px;
+            display: block;
+            margin-bottom: 20px;
+            border-radius: 8px;
+        }
+
         .content-item {
             margin-bottom: 25px;
             border-bottom: 1px solid #ddd;
@@ -53,6 +69,12 @@
         @foreach ($contents as $content)
             <div class="content-item">
                 <h2>{{ $content->title }}</h2>
+                @if ($content->poster)
+                    <img src="{{ asset('storage/' . $content->poster) }}" alt="{{ $content->title }} Poster"
+                        class="poster-img">
+                @else
+                    <p><em>No poster available.</em></p>
+                @endif
                 <p><strong>Type:</strong> {{ ucfirst($content->type) }}</p>
                 <p><strong>Release Date:</strong> {{ \Carbon\Carbon::parse($content->release_date)->format('d M, Y') }}
                 </p>

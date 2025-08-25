@@ -1,8 +1,26 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>My Watched Movies and Series</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 30px auto;
+            padding: 0 15px;
+            background-color: #f9f9f9;
+            color: #333;
+        }
+        .poster-img {
+            max-width: 150px;
+            display: block;
+            margin-bottom: 20px;
+            border-radius: 8px;
+        }
+    </style>
 </head>
+
 <body>
     <h1>My Watched Movies and Series</h1>
 
@@ -10,15 +28,23 @@
         @foreach ($contents as $content)
             <div class="content-item">
                 <h2>{{ $content->title }}</h2>
+                @if ($content->poster)
+                    <img src="{{ asset('storage/' . $content->poster) }}" alt="{{ $content->title }} Poster"
+                        class="poster-img">
+                @else
+                    <p><em>No poster available.</em></p>
+                @endif
                 <p><strong>Type:</strong> {{ ucfirst($content->type) }}</p>
-                <p><strong>Release Date:</strong> {{ \Carbon\Carbon::parse($content->release_date)->format('d M, Y') }}</p>
+                <p><strong>Release Date:</strong> {{ \Carbon\Carbon::parse($content->release_date)->format('d M, Y') }}
+                </p>
                 <p><strong>Rating:</strong> {{ $content->rating ?? 'N/A' }}</p>
-                <p><strong>Genres:</strong> 
+                <p><strong>Genres:</strong>
                     @foreach ($content->genres as $genre)
-                        {{ $genre->name }}@if (!$loop->last), @endif
+                        {{ $genre->name }}@if (!$loop->last)
+                            ,
+                        @endif
                     @endforeach
                 </p>
-                <p>{{ \Illuminate\Support\Str::limit($content->description, 100) }}</p>
             </div>
         @endforeach
     @else
@@ -27,4 +53,5 @@
 
     <a href="{{ route('user.index') }}">Back to All Contents</a>
 </body>
+
 </html>
