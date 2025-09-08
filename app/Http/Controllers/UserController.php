@@ -16,33 +16,53 @@ class UserController extends Controller
         $genre = $request->input('genre', 'all');
         $rating = $request->input('rating', '');
 
+
         // Start query builder
         $query = Content::with(['genres' => function ($q) {
             $q->orderBy('name');
         }]);
 
-        if (!empty($search)) {
-            $query->where('title', 'LIKE', "%{$search}%");
-        }
+        $recommendation = $request->input('recommendation', false);
+        if ($recommendation) {
+            $user = auth()->user();
+            $watchedGenreIds = $user->watchedContents()->with('genres')->get()->pluck('genres.*.id')->flatten()->unique();
+            $watchlistGenreIds = $user->watchlist()->with('genres')->get()->pluck('genres.*.id')->flatten()->unique();
+            $genreIds = $watchedGenreIds->merge($watchlistGenreIds)->unique();
 
-        if ($type !== 'all') {
-            $query->where('type', $type);
-        }
+            if ($genreIds->count() > 0) {
+                $alreadySeenIds = $user->watchedContents->pluck('id')->merge($user->watchlist->pluck('id'))->unique();
+                $query = Content::whereHas('genres', function ($q) use ($genreIds) {
+                    $q->whereIn('genres.id', $genreIds);
+                })
+                    ->whereNotIn('id', $alreadySeenIds);
+            } else {
+                $query = Content::orderBy('rating', 'desc')->take(10);
+            }
+            $contents = $query->orderBy('title', 'asc')->paginate(10);
+        } else {
+            if (!empty($search)) {
+                $query->where('title', 'LIKE', "%{$search}%");
+            }
 
-        if ($filter === 'released') {
-            $query->whereDate('release_date', '<=', now());
-        } elseif ($filter === 'upcoming') {
-            $query->whereDate('release_date', '>', now());
-        }
+            if ($type !== 'all') {
+                $query->where('type', $type);
+            }
 
-        if ($genre !== 'all' && !empty($genre)) {
-            $query->whereHas('genres', function ($q) use ($genre) {
-                $q->where('genres.id', $genre);
-            });
-        }
+            if ($filter === 'released') {
+                $query->whereDate('release_date', '<=', now());
+            } elseif ($filter === 'upcoming') {
+                $query->whereDate('release_date', '>', now());
+            }
 
-        if (is_numeric($rating)) {
-            $query->where('rating', '>=', floatval($rating));
+            if ($genre !== 'all' && !empty($genre)) {
+                $query->whereHas('genres', function ($q) use ($genre) {
+                    $q->where('genres.id', $genre);
+                });
+            }
+
+            if (is_numeric($rating)) {
+                $query->where('rating', '>=', floatval($rating));
+            }
         }
 
         // Sort alphabetically and paginate
@@ -57,8 +77,28 @@ class UserController extends Controller
     public function show($id)
     {
         $content = Content::findOrFail($id);
+        $content->trailer_embed_url = $this->youtubeEmbedUrl($content->trailer_url);
+
         return view('user.show', compact('content'));
     }
+
+    private function youtubeEmbedUrl(?string $url): ?string
+    {
+        if (!$url) {
+            return null;
+        }
+
+        if (preg_match('/youtu\.be\/([^\?\/]+)/', $url, $matches)) {
+            return 'https://www.youtube.com/embed/' . $matches[1];
+        }
+
+        if (preg_match('/v=([^&]+)/', $url, $matches)) {
+            return 'https://www.youtube.com/embed/' . $matches[1];
+        }
+
+        return $url;
+    }
+
 
     public function addToWatchlist($id)
     {
@@ -104,5 +144,31 @@ class UserController extends Controller
     {
         $contents = auth()->user()->watchedContents()->with('genres')->get();
         return view('user.watched', compact('contents'));
+    }
+
+    public function downloadWatchlistPdf()
+    {
+        $contents = auth()->user()->watchlist()->with('genres')->get();
+        $pdf = \PDF::loadView('user.watchlist_pdf', compact('contents'));
+        return $pdf->download('watchlist.pdf');
+    }
+
+    public function rateWatchedContent(Request $request, $contentId)
+    {
+        $request->validate([
+            'rating' => 'required|numeric|min:0|max:10',
+        ]);
+
+        $user = auth()->user();
+        $content = Content::findOrFail($contentId);
+
+        $user->watchedContents()->updateExistingPivot($content->id, ['rating' => $request->rating]);
+
+        $averageRating = $content->watchedBy()->wherePivotNotNull('rating')->avg('rating');
+
+        $content->rating = $averageRating !== null ? round($averageRating, 1) : 0;
+        $content->save();
+
+        return back()->with('success', 'Your rating has been saved.');
     }
 }

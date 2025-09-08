@@ -64,6 +64,9 @@
         <label for="description">Description:</label>
         <textarea name="description" id="description">{{ old('description', $content->description) }}</textarea>
 
+        <label for="trailer_url">Trailer URL:</label>
+        <input type="text" name="trailer_url" id="trailer_url" value="{{ old('title', $content->trailer_url) }}">
+
         <label for="release_date">Release Date:</label>
         <input type="date" name="release_date" id="release_date"
             value="{{ old('release_date', $content->release_date->format('Y-m-d')) }}" required>

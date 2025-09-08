@@ -47,16 +47,6 @@
             cursor: pointer;
         }
 
-        .download-btn {
-            background: #586306ff;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            padding: 6px 12px;
-            cursor: pointer;
-
-        }
-
         .back-link {
             margin-top: 20px;
             display: inline-block;
@@ -73,11 +63,6 @@
 </head>
 
 <body>
-    <h1>My Watchlist</h1>
-    <a href="{{ route('watchlist.pdf') }}">
-        <button class="download-btn">Download Watchlist as PDF </button>
-    </a>
-
     @if ($contents->count() > 0)
         @foreach ($contents as $content)
             <div class="content-item">
@@ -100,23 +85,13 @@
                     @endforeach
                 </p>
                 <p>{{ \Illuminate\Support\Str::limit($content->description, 100) }}</p>
-                <form action="{{ route('watched.add', $content->id) }}" method="POST" style="display:inline;">
-                    @csrf
-                    <button type="submit" class="mark-watched-btn">Mark as Watched</button>
-                </form>
-                <form action="{{ route('watchlist.remove', $content->id) }}" method="POST">
-                    @csrf
-                    <button type="submit" class="remove-btn">Remove from Watchlist</button>
-                </form>
-
-
+                
             </div>
         @endforeach
     @else
         <p>Your watchlist is empty.</p>
     @endif
 
-    <a href="{{ route('user.index') }}" class="back-link">Back to All Contents</a>
 </body>
 
 </html>

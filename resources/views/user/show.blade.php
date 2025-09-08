@@ -83,6 +83,18 @@
     @else
         <p><em>No poster available.</em></p>
     @endif
+    
+    @if ($content->trailer_embed_url)
+        <div
+            style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%; margin-top: 20px;">
+            <iframe src="{{ $content->trailer_embed_url }}"
+                style="position: absolute; top:0; left:0; width: 100%; height: 100%;" frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen>
+            </iframe>
+        </div>
+    @endif
+
 
     <p><strong>Type:</strong> {{ ucfirst($content->type) }}</p>
     <p><strong>Release Date:</strong> {{ $content->release_date->format('d M, Y') }}</p>

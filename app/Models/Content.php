@@ -9,10 +9,11 @@ class Content extends Model
     protected $fillable = [
         'title',
         'description',
+        'trailer_url',
         'release_date',
         'type',
         'rating',
-        'poster'
+        'poster',
     ];
     protected $casts = ['release_date' => 'date'];
 
@@ -28,6 +29,14 @@ class Content extends Model
 
     public function watchedBy()
     {
-        return $this->belongsToMany(User::class, 'watched')->withTimestamps();
+        return $this->belongsToMany(User::class, 'watched')
+            ->withPivot('rating')
+            ->withTimestamps();
+    }
+
+    public function getAverageUserRatingAttribute()
+    {
+        $rating =  $this->watchedBy()->wherePivotNotNull('rating')->avg('rating');
+        return $rating !== null ? round($rating, 1) : null;
     }
 }

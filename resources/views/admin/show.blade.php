@@ -34,7 +34,6 @@
 <body>
     <h1>{{ $content->title }}</h1>
 
-    {{-- Display poster if available --}}
     @if ($content->poster)
         <img src="{{ asset('storage/' . $content->poster) }}" alt="{{ $content->title }} Poster" class="poster-img">
     @else

@@ -24,4 +24,9 @@ Route::get('/watchlist', [UserController::class, 'showWatchlist'])->name('watchl
 Route::post('/watched/add/{id}', [UserController::class, 'markAsWatched'])->name('watched.add')->middleware('auth');
 Route::post('/watched/remove/{id}', [UserController::class, 'unmarkAsWatched'])->name('watched.remove')->middleware('auth');
 Route::get('/watched', [UserController::class, 'showWatched'])->name('watched.show')->middleware('auth');
+Route::get('/watchlist/download', [UserController::class, 'downloadWatchlistPdf'])->name('watchlist.pdf')->middleware('auth');
+Route::get('/recommendations', [UserController::class, 'recommendations'])->name('user.recommendations')->middleware('auth');
+Route::post('/content/{content}/rate', [UserController::class, 'rateWatchedContent'])->name('content.rate')->middleware('auth');
+
+
 

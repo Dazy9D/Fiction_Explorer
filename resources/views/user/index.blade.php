@@ -48,7 +48,7 @@
         }
 
         .action-buttons button {
-            padding: 6px 18px;
+            padding: 6px 8px;
             border: none;
             outline: none;
             border-radius: 5px;
@@ -78,7 +78,6 @@
         }
 
 
-        .btn-add,
         .btn-logout {
             padding: 8px 18px;
             border-radius: 4px;
@@ -108,22 +107,6 @@
             background-color: #9b2c2c;
         }
 
-        .btn-edit {
-            background-color: #fbbf24;
-            color: #1a202c;
-            padding: 4px 8px;
-            font-size: 0.9rem;
-            border-radius: 4px;
-            font-weight: bold;
-            text-decoration: none;
-            margin-left: 10px;
-        }
-
-        .btn-edit:hover {
-            background-color: #d97706;
-            color: white;
-        }
-
         .watchlist-btn {
             background-color: #388e3c;
         }
@@ -139,6 +122,10 @@
         .watchlist-link {
             margin-bottom: 15px;
             display: inline-block;
+        }
+
+        .recommendation-btn {
+            background-color: #7b1d6fff;
         }
     </style>
 </head>
@@ -158,10 +145,17 @@
                         View Watched
                     </button>
                 </a>
+
+                <form method="get" action="{{ route('user.index') }}">
+                    <input type="hidden" name="recommendation" value="1">
+                    <button type="submit" class="recommendation-btn">Get Personalized Recommendations</button>
+                </form>
+
                 <form action="{{ route('logout') }}" method="POST">
                     @csrf
                     <button type="submit" class="logout-btn">Logout</button>
                 </form>
+
             </div>
         @endauth
     </div>

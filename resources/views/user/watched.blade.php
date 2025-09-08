@@ -12,6 +12,7 @@
             background-color: #f9f9f9;
             color: #333;
         }
+
         .poster-img {
             max-width: 150px;
             display: block;
@@ -45,6 +46,19 @@
                         @endif
                     @endforeach
                 </p>
+                <form method="POST" action="{{ route('content.rate', $content->id) }}">
+                    @csrf
+                    <label>Rate this content:</label>
+                    <select name="rating">
+                        @for ($i = 1.0; $i <= 10; $i+=0.5)
+                            <option value="{{ $i }}"
+                                {{ optional(auth()->user()->watchedContents()->where('content_id', $content->id)->first())->pivot->rating == $i ? 'selected' : '' }}>
+                                {{ $i }}
+                            </option>
+                        @endfor
+                    </select>
+                    <button type="submit">Submit Rating</button>
+                </form>
             </div>
         @endforeach
     @else

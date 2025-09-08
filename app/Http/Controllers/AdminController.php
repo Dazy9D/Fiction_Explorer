@@ -51,12 +51,29 @@ class AdminController extends Controller
     }
 
 
-    // Show details of a single content
-
     public function show($id)
     {
         $content = Content::findOrFail($id);
-        return view('admin.show', compact('content'));
+        $content->trailer_embed_url = $this->youtubeEmbedUrl($content->trailer_url);
+
+        return view('user.show', compact('content'));
+    }
+
+    private function youtubeEmbedUrl(?string $url): ?string
+    {
+        if (!$url) {
+            return null;
+        }
+
+        if (preg_match('/youtu\.be\/([^\?\/]+)/', $url, $matches)) {
+            return 'https://www.youtube.com/embed/' . $matches[1];
+        }
+
+        if (preg_match('/v=([^&]+)/', $url, $matches)) {
+            return 'https://www.youtube.com/embed/' . $matches[1];
+        }
+
+        return $url;
     }
 
 
@@ -72,6 +89,7 @@ class AdminController extends Controller
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
+            'trailer_url' => 'nullable|string|max:255',
             'release_date' => 'required|date',
             'type' => 'required|in:movie,series',
             'genres' => 'nullable|array',
@@ -110,6 +128,7 @@ class AdminController extends Controller
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
+            'trailer_url' => 'nullable|string|max:255',
             'release_date' => 'required|date',
             'type' => 'required|in:movie,series',
             'genres' => 'nullable|array',
