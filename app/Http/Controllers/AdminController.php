@@ -56,7 +56,7 @@ class AdminController extends Controller
         $content = Content::findOrFail($id);
         $content->trailer_embed_url = $this->youtubeEmbedUrl($content->trailer_url);
 
-        return view('user.show', compact('content'));
+        return view('admin.show', compact('content'));
     }
 
     private function youtubeEmbedUrl(?string $url): ?string

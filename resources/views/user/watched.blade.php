@@ -19,6 +19,21 @@
             margin-bottom: 20px;
             border-radius: 8px;
         }
+
+        button {
+            display: inline-block;
+            padding: 6px 14px;
+            margin-right: 10px;
+            background-color: #1a73e8;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .submit-btn {
+            background-color: #6ac01aff;
+        }
     </style>
 </head>
 
@@ -48,16 +63,16 @@
                 </p>
                 <form method="POST" action="{{ route('content.rate', $content->id) }}">
                     @csrf
-                    <label>Rate this content:</label>
+                    <label><strong>Rate this content:</strong></label>
                     <select name="rating">
-                        @for ($i = 1.0; $i <= 10; $i+=0.5)
+                        @for ($i = 1.0; $i <= 10; $i += 0.5)
                             <option value="{{ $i }}"
                                 {{ optional(auth()->user()->watchedContents()->where('content_id', $content->id)->first())->pivot->rating == $i ? 'selected' : '' }}>
                                 {{ $i }}
                             </option>
                         @endfor
                     </select>
-                    <button type="submit">Submit Rating</button>
+                    <button type="submit" class = "submit-btn">Submit Rating</button>
                 </form>
             </div>
         @endforeach

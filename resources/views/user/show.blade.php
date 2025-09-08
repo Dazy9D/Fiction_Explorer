@@ -78,22 +78,27 @@
 <body>
     <h1>{{ $content->title }}</h1>
 
-    @if ($content->poster)
-        <img src="{{ asset('storage/' . $content->poster) }}" alt="{{ $content->title }} Poster" class="poster-img">
-    @else
-        <p><em>No poster available.</em></p>
-    @endif
-    
-    @if ($content->trailer_embed_url)
-        <div
-            style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%; margin-top: 20px;">
-            <iframe src="{{ $content->trailer_embed_url }}"
-                style="position: absolute; top:0; left:0; width: 100%; height: 100%;" frameborder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowfullscreen>
-            </iframe>
+    <div style="display:flex; align-items:flex-start; gap:20px; margin-top:20px; flex-wrap:wrap;">
+        <div style="flex: 0 0 auto;">
+            @if ($content->poster)
+                <img src="{{ asset('storage/' . $content->poster) }}" alt="{{ $content->title }} Poster" class="poster-img">
+            @else
+                <p><em>No poster available.</em></p>
+            @endif
         </div>
-    @endif
+
+        @if ($content->trailer_embed_url)
+            <div style="flex:1 1 60%; min-width:300px; margin-top:12px;">
+                <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; width:100%;">
+                    <iframe src="{{ $content->trailer_embed_url }}"
+                        style="position: absolute; top:0; left:0; width: 100%; height: 100%;" frameborder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowfullscreen>
+                    </iframe>
+                </div>
+            </div>
+        @endif
+    </div>
 
 
     <p><strong>Type:</strong> {{ ucfirst($content->type) }}</p>
